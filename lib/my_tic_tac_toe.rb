@@ -1,4 +1,6 @@
 require 'pry'
+require 'io/console'
+
 class TicTacToe
 
     WIN_COMBINATIONS = [
@@ -25,7 +27,17 @@ class TicTacToe
     end
 
     def input_to_index(user_input)
-        user_input.to_i - 1
+        keypad(user_input.to_i) - 1
+    end
+
+    def keypad(num)
+        if num.between?(1, 3)
+            num += 6
+        elsif num.between?(7, 9)
+            num -+ 6
+        else
+            num
+        end
     end
 
     def move(index, token = "X")
@@ -49,9 +61,9 @@ class TicTacToe
         turn_count.even? ? "X" : "O"
     end
 
-    def turn(output = "Please enter a num correlating to a tic tac toe space (1-9)")
+    def turn(output = "Please enter a num correlating to a tic tac toe space  on the num keypad")
         puts output
-        user_input = gets
+        user_input = STDIN.getch
         index = input_to_index(user_input)
         if valid_move?(index)
             move(index, current_player)
@@ -85,10 +97,15 @@ class TicTacToe
         end
     end
 
-    def play
+    def play(player_1, player_2)
         display_board
         turn until over?
-        puts winner ? "Congratulations #{winner}!" : "Cat's Game!"
+        if draw?
+            puts "Draw!"
+        else
+            result = winner == "X" ? player_1 : player_2
+            puts "Congratulations #{result}!"
+        end
     end
 
 end
